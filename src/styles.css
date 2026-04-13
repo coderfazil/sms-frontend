@@ -320,10 +320,28 @@ td span {
   background: #fff5f5 !important;
 }
 
+.date-field {
+  position: relative;
+  width: 100%;
+}
+
+.date-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: #7a8b87;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .date-input {
+  position: relative;
   appearance: none;
   -webkit-appearance: none;
   text-align: left;
+  background: transparent;
+  z-index: 2;
 }
 
 .form-grid select {
@@ -345,8 +363,31 @@ td span {
   text-align: left;
 }
 
+.date-input:focus {
+  background: #f9fefd;
+}
+
+.date-input:not(:valid)::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.date-input:not(:valid) {
+  color: transparent;
+}
+
+.date-input:focus::-webkit-datetime-edit,
+.date-input:valid::-webkit-datetime-edit {
+  color: var(--text-main);
+}
+
+.date-input:focus,
+.date-input:valid {
+  color: var(--text-main);
+}
+
 .date-input::-webkit-calendar-picker-indicator {
   cursor: pointer;
+  opacity: 1;
 }
 
 .field-error,

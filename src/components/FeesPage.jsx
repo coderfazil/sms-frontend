@@ -39,26 +39,22 @@ function FeesPage({
           onChange={(event) => setFeeForm({ ...feeForm, feeAmount: event.target.value })}
           required
         />
-        <input
-          id="payment-date"
-          className="date-input"
-          type={feeForm.paymentDate ? "date" : "text"}
-          placeholder="Payment Date"
-          value={feeForm.paymentDate}
-          disabled={feeSubmitLoading}
-          onFocus={(event) => {
-            event.target.type = "date";
-          }}
-          onBlur={(event) => {
-            if (!event.target.value) {
-              event.target.type = "text";
+        <div className="date-field">
+          {!feeForm.paymentDate ? (
+            <span className="date-placeholder">Payment Date</span>
+          ) : null}
+          <input
+            id="payment-date"
+            className="date-input"
+            type="date"
+            value={feeForm.paymentDate}
+            disabled={feeSubmitLoading}
+            onChange={(event) =>
+              setFeeForm({ ...feeForm, paymentDate: event.target.value })
             }
-          }}
-          onChange={(event) =>
-            setFeeForm({ ...feeForm, paymentDate: event.target.value })
-          }
-          required
-        />
+            required
+          />
+        </div>
         <select
           value={feeForm.paymentStatus}
           disabled={feeSubmitLoading}

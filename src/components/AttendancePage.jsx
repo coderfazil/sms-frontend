@@ -47,29 +47,25 @@ function AttendancePage({
             </option>
           ))}
         </select>
-        <input
-          id="attendance-date"
-          className="date-input"
-          type={attendanceForm.attendanceDate ? "date" : "text"}
-          placeholder="Attendance Date"
-          value={attendanceForm.attendanceDate}
-          disabled={attendanceSubmitLoading}
-          onFocus={(event) => {
-            event.target.type = "date";
-          }}
-          onBlur={(event) => {
-            if (!event.target.value) {
-              event.target.type = "text";
+        <div className="date-field">
+          {!attendanceForm.attendanceDate ? (
+            <span className="date-placeholder">Attendance Date</span>
+          ) : null}
+          <input
+            id="attendance-date"
+            className="date-input"
+            type="date"
+            value={attendanceForm.attendanceDate}
+            disabled={attendanceSubmitLoading}
+            onChange={(event) =>
+              setAttendanceForm({
+                ...attendanceForm,
+                attendanceDate: event.target.value
+              })
             }
-          }}
-          onChange={(event) =>
-            setAttendanceForm({
-              ...attendanceForm,
-              attendanceDate: event.target.value
-            })
-          }
-          required
-        />
+            required
+          />
+        </div>
         <select
           value={attendanceForm.status}
           disabled={attendanceSubmitLoading}
