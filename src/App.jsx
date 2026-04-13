@@ -5,7 +5,7 @@ import AttendancePage from "./components/AttendancePage";
 import ClassesPage from "./components/ClassesPage";
 import FeesPage from "./components/FeesPage";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://sms-backend-xuio.onrender.com";
 
 const emptyStudentForm = {
   fullName: "",
