@@ -1,4 +1,10 @@
-function ClassesPage({ classForm, setClassForm, classEntries, onSubmit }) {
+function ClassesPage({
+  classForm,
+  classSubmitLoading,
+  setClassForm,
+  classEntries,
+  onSubmit
+}) {
   return (
     <section className="panel page-panel">
       <div className="page-header">
@@ -13,12 +19,14 @@ function ClassesPage({ classForm, setClassForm, classEntries, onSubmit }) {
         <input
           placeholder="Class Topic / Subject"
           value={classForm.topic}
+          disabled={classSubmitLoading}
           onChange={(event) => setClassForm({ ...classForm, topic: event.target.value })}
           required
         />
         <input
           type="date"
           value={classForm.classDate}
+          disabled={classSubmitLoading}
           onChange={(event) =>
             setClassForm({ ...classForm, classDate: event.target.value })
           }
@@ -27,13 +35,21 @@ function ClassesPage({ classForm, setClassForm, classEntries, onSubmit }) {
         <input
           placeholder="Batch Name"
           value={classForm.batchName}
+          disabled={classSubmitLoading}
           onChange={(event) =>
             setClassForm({ ...classForm, batchName: event.target.value })
           }
           required
         />
-        <button type="submit" className="primary-btn">
-          Add Class
+        <button type="submit" className="primary-btn" disabled={classSubmitLoading}>
+          {classSubmitLoading ? (
+            <>
+              <span className="spinner tiny" aria-hidden="true" />
+              Saving...
+            </>
+          ) : (
+            "Add Class"
+          )}
         </button>
       </form>
 

@@ -4,6 +4,7 @@ function AttendancePage({
   students,
   attendanceForm,
   attendanceError,
+  attendanceSubmitLoading,
   setAttendanceForm,
   attendanceRecords,
   onSubmit
@@ -33,6 +34,7 @@ function AttendancePage({
       <form className="form-grid" onSubmit={onSubmit}>
         <select
           value={attendanceForm.student}
+          disabled={attendanceSubmitLoading}
           onChange={(event) =>
             setAttendanceForm({ ...attendanceForm, student: event.target.value })
           }
@@ -48,6 +50,7 @@ function AttendancePage({
         <input
           type="date"
           value={attendanceForm.attendanceDate}
+          disabled={attendanceSubmitLoading}
           onChange={(event) =>
             setAttendanceForm({
               ...attendanceForm,
@@ -58,6 +61,7 @@ function AttendancePage({
         />
         <select
           value={attendanceForm.status}
+          disabled={attendanceSubmitLoading}
           onChange={(event) =>
             setAttendanceForm({ ...attendanceForm, status: event.target.value })
           }
@@ -66,8 +70,15 @@ function AttendancePage({
           <option value="Present">Present</option>
           <option value="Absent">Absent</option>
         </select>
-        <button type="submit" className="primary-btn">
-          Save Attendance
+        <button type="submit" className="primary-btn" disabled={attendanceSubmitLoading}>
+          {attendanceSubmitLoading ? (
+            <>
+              <span className="spinner tiny" aria-hidden="true" />
+              Saving...
+            </>
+          ) : (
+            "Save Attendance"
+          )}
         </button>
       </form>
 

@@ -5,13 +5,13 @@ const navItems = [
   { id: "fees", label: "Fees" }
 ];
 
-function Navbar({ currentPage, onNavigate }) {
+function Navbar({ currentPage, isNavigating, pendingPage, onNavigate }) {
   return (
     <nav className="navbar">
       <div className="brand-block">
-
         <div>
-            <strong>SMS Panel</strong>
+          <strong>SMS Panel</strong>
+          <p>Manage students, attendance, classes, and fees.</p>
         </div>
       </div>
       <div className="nav-links">
@@ -20,8 +20,12 @@ function Navbar({ currentPage, onNavigate }) {
             key={item.id}
             type="button"
             className={currentPage === item.id ? "nav-btn active" : "nav-btn"}
+            disabled={isNavigating}
             onClick={() => onNavigate(item.id)}
           >
+            {isNavigating && pendingPage === item.id ? (
+              <span className="spinner tiny" aria-hidden="true" />
+            ) : null}
             {item.label}
           </button>
         ))}

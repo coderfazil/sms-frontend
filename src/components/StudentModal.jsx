@@ -4,6 +4,8 @@ function StudentModal({
   studentForm,
   studentFormErrors,
   studentFormErrorMessage,
+  studentSubmitLoading,
+  deletingStudentId,
   setStudentForm,
   onClose,
   onSubmit,
@@ -32,6 +34,7 @@ function StudentModal({
               className={studentFormErrors.fullName ? "input-error" : ""}
               placeholder="Full Name"
               value={studentForm.fullName}
+              disabled={studentSubmitLoading || Boolean(deletingStudentId)}
               onChange={(event) =>
                 setStudentForm({ ...studentForm, fullName: event.target.value })
               }
@@ -47,6 +50,7 @@ function StudentModal({
               type="email"
               placeholder="Email"
               value={studentForm.email}
+              disabled={studentSubmitLoading || Boolean(deletingStudentId)}
               onChange={(event) =>
                 setStudentForm({ ...studentForm, email: event.target.value })
               }
@@ -61,6 +65,7 @@ function StudentModal({
               className={studentFormErrors.contactNumber ? "input-error" : ""}
               placeholder="Contact Number"
               value={studentForm.contactNumber}
+              disabled={studentSubmitLoading || Boolean(deletingStudentId)}
               onChange={(event) =>
                 setStudentForm({ ...studentForm, contactNumber: event.target.value })
               }
@@ -75,6 +80,7 @@ function StudentModal({
               className={studentFormErrors.courseName ? "input-error" : ""}
               placeholder="Course Name"
               value={studentForm.courseName}
+              disabled={studentSubmitLoading || Boolean(deletingStudentId)}
               onChange={(event) =>
                 setStudentForm({ ...studentForm, courseName: event.target.value })
               }
@@ -89,6 +95,7 @@ function StudentModal({
               className={studentFormErrors.batchTiming ? "input-error" : ""}
               placeholder="Batch Timing"
               value={studentForm.batchTiming}
+              disabled={studentSubmitLoading || Boolean(deletingStudentId)}
               onChange={(event) =>
                 setStudentForm({ ...studentForm, batchTiming: event.target.value })
               }
@@ -98,8 +105,21 @@ function StudentModal({
               <p className="field-error">{studentFormErrors.batchTiming}</p>
             ) : null}
           </div>
-          <button type="submit" className="primary-btn">
-            {student ? "Update Student" : "Add Student"}
+          <button
+            type="submit"
+            className="primary-btn"
+            disabled={studentSubmitLoading || Boolean(deletingStudentId)}
+          >
+            {studentSubmitLoading ? (
+              <>
+                <span className="spinner tiny" aria-hidden="true" />
+                {student ? "Updating..." : "Saving..."}
+              </>
+            ) : student ? (
+              "Update Student"
+            ) : (
+              "Add Student"
+            )}
           </button>
         </form>
 
@@ -112,9 +132,17 @@ function StudentModal({
             <button
               type="button"
               className="danger-btn"
+              disabled={studentSubmitLoading || deletingStudentId === student._id}
               onClick={() => onDelete(student._id)}
             >
-              Delete Student
+              {deletingStudentId === student._id ? (
+                <>
+                  <span className="spinner tiny" aria-hidden="true" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete Student"
+              )}
             </button>
           </div>
         ) : null}

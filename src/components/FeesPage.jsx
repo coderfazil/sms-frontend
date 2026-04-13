@@ -1,4 +1,11 @@
-function FeesPage({ students, feeForm, setFeeForm, feePayments, onSubmit }) {
+function FeesPage({
+  students,
+  feeForm,
+  feeSubmitLoading,
+  setFeeForm,
+  feePayments,
+  onSubmit
+}) {
   return (
     <section className="panel page-panel">
       <div className="page-header">
@@ -12,6 +19,7 @@ function FeesPage({ students, feeForm, setFeeForm, feePayments, onSubmit }) {
       <form className="form-grid" onSubmit={onSubmit}>
         <select
           value={feeForm.student}
+          disabled={feeSubmitLoading}
           onChange={(event) => setFeeForm({ ...feeForm, student: event.target.value })}
           required
         >
@@ -27,12 +35,14 @@ function FeesPage({ students, feeForm, setFeeForm, feePayments, onSubmit }) {
           min="0"
           placeholder="Fee Amount"
           value={feeForm.feeAmount}
+          disabled={feeSubmitLoading}
           onChange={(event) => setFeeForm({ ...feeForm, feeAmount: event.target.value })}
           required
         />
         <input
           type="date"
           value={feeForm.paymentDate}
+          disabled={feeSubmitLoading}
           onChange={(event) =>
             setFeeForm({ ...feeForm, paymentDate: event.target.value })
           }
@@ -40,6 +50,7 @@ function FeesPage({ students, feeForm, setFeeForm, feePayments, onSubmit }) {
         />
         <select
           value={feeForm.paymentStatus}
+          disabled={feeSubmitLoading}
           onChange={(event) =>
             setFeeForm({ ...feeForm, paymentStatus: event.target.value })
           }
@@ -49,8 +60,15 @@ function FeesPage({ students, feeForm, setFeeForm, feePayments, onSubmit }) {
           <option value="Partial">Partial</option>
           <option value="Pending">Pending</option>
         </select>
-        <button type="submit" className="primary-btn">
-          Save Payment
+        <button type="submit" className="primary-btn" disabled={feeSubmitLoading}>
+          {feeSubmitLoading ? (
+            <>
+              <span className="spinner tiny" aria-hidden="true" />
+              Saving...
+            </>
+          ) : (
+            "Save Payment"
+          )}
         </button>
       </form>
 
@@ -67,10 +85,10 @@ function FeesPage({ students, feeForm, setFeeForm, feePayments, onSubmit }) {
           <tbody>
             {feePayments.map((payment) => (
               <tr key={payment._id}>
-                <td>{payment.student?.fullName || "Student"}</td>
-                <td>Rs {payment.feeAmount}</td>
-                <td>{payment.paymentDate}</td>
-                <td>
+                <td data-label="Student">{payment.student?.fullName || "Student"}</td>
+                <td data-label="Amount">Rs {payment.feeAmount}</td>
+                <td data-label="Date">{payment.paymentDate}</td>
+                <td data-label="Status">
                   <span
                     className={`status-pill ${
                       payment.paymentStatus === "Paid"

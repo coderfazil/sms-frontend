@@ -78,6 +78,13 @@ function App() {
   const [attendanceError, setAttendanceError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [pendingPage, setPendingPage] = useState("");
+  const [studentSubmitLoading, setStudentSubmitLoading] = useState(false);
+  const [deletingStudentId, setDeletingStudentId] = useState("");
+  const [attendanceSubmitLoading, setAttendanceSubmitLoading] = useState(false);
+  const [classSubmitLoading, setClassSubmitLoading] = useState(false);
+  const [feeSubmitLoading, setFeeSubmitLoading] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -104,6 +111,21 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (pageId) => {
+    if (pageId === currentPage || isNavigating) {
+      return;
+    }
+
+    setIsNavigating(true);
+    setPendingPage(pageId);
+
+    window.setTimeout(() => {
+      setCurrentPage(pageId);
+      setIsNavigating(false);
+      setPendingPage("");
+    }, 220);
   };
 
   const openAddStudentModal = () => {
@@ -175,6 +197,7 @@ function App() {
     }
 
     try {
+      setStudentSubmitLoading(true);
       await requestJson(
         selectedStudent ? `/students/${selectedStudent._id}` : "/students",
         {
@@ -191,11 +214,14 @@ function App() {
         submitError.message || "Unable to save student details."
       );
       return;
+    } finally {
+      setStudentSubmitLoading(false);
     }
   };
 
   const handleStudentDelete = async (studentId) => {
     try {
+      setDeletingStudentId(studentId);
       await requestJson(`/students/${studentId}`, {
         method: "DELETE"
       });
@@ -207,6 +233,8 @@ function App() {
       await loadDashboardData();
     } catch (deleteError) {
       setError(deleteError.message || "Unable to delete student.");
+    } finally {
+      setDeletingStudentId("");
     }
   };
 
@@ -216,6 +244,7 @@ function App() {
     setAttendanceError("");
 
     try {
+      setAttendanceSubmitLoading(true);
       await requestJson("/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -227,6 +256,8 @@ function App() {
     } catch (submitError) {
       setAttendanceError(submitError.message || "Unable to save attendance.");
       return;
+    } finally {
+      setAttendanceSubmitLoading(false);
     }
   };
 
@@ -234,6 +265,7 @@ function App() {
     event.preventDefault();
 
     try {
+      setClassSubmitLoading(true);
       await requestJson("/classes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -244,6 +276,8 @@ function App() {
       await loadDashboardData();
     } catch (submitError) {
       setError(submitError.message || "Unable to save class entry.");
+    } finally {
+      setClassSubmitLoading(false);
     }
   };
 
@@ -251,6 +285,7 @@ function App() {
     event.preventDefault();
 
     try {
+      setFeeSubmitLoading(true);
       await requestJson("/fees", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -264,6 +299,8 @@ function App() {
       await loadDashboardData();
     } catch (submitError) {
       setError(submitError.message || "Unable to save fee payment.");
+    } finally {
+      setFeeSubmitLoading(false);
     }
   };
   const summary = {
@@ -284,15 +321,36 @@ function App() {
         </div>
       </header>
 
-      <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
+      <Navbar
+        currentPage={currentPage}
+        isNavigating={isNavigating}
+        pendingPage={pendingPage}
+        onNavigate={handlePageChange}
+      />
 
       {error ? <div className="error-banner">{error}</div> : null}
 
-      {currentPage === "dashboard" ? (
+      {loading || isNavigating ? (
+        <section className="panel page-panel loading-panel">
+          <div className="spinner large" aria-hidden="true" />
+          <div>
+            <h2>{isNavigating ? "Loading page" : "Loading dashboard"}</h2>
+            <p className="loading-copy">
+              {isNavigating
+                ? "Preparing the selected section."
+                : "Fetching the latest records from the server."}
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      {!loading && !isNavigating && currentPage === "dashboard" ? (
         <DashboardPage
           students={students}
           summary={summary}
           loading={loading}
+          studentSubmitLoading={studentSubmitLoading}
+          deletingStudentId={deletingStudentId}
           selectedStudent={selectedStudent}
           isStudentModalOpen={isStudentModalOpen}
           studentForm={studentForm}
@@ -307,30 +365,33 @@ function App() {
         />
       ) : null}
 
-      {currentPage === "attendance" ? (
+      {!loading && !isNavigating && currentPage === "attendance" ? (
         <AttendancePage
           students={students}
           attendanceForm={attendanceForm}
           attendanceError={attendanceError}
+          attendanceSubmitLoading={attendanceSubmitLoading}
           setAttendanceForm={setAttendanceForm}
           attendanceRecords={attendanceRecords}
           onSubmit={handleAttendanceSubmit}
         />
       ) : null}
 
-      {currentPage === "classes" ? (
+      {!loading && !isNavigating && currentPage === "classes" ? (
         <ClassesPage
           classForm={classForm}
+          classSubmitLoading={classSubmitLoading}
           setClassForm={setClassForm}
           classEntries={classEntries}
           onSubmit={handleClassSubmit}
         />
       ) : null}
 
-      {currentPage === "fees" ? (
+      {!loading && !isNavigating && currentPage === "fees" ? (
         <FeesPage
           students={students}
           feeForm={feeForm}
+          feeSubmitLoading={feeSubmitLoading}
           setFeeForm={setFeeForm}
           feePayments={feePayments}
           onSubmit={handleFeeSubmit}

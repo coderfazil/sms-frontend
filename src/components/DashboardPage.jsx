@@ -6,6 +6,8 @@ function DashboardPage({
   students,
   summary,
   loading,
+  studentSubmitLoading,
+  deletingStudentId,
   selectedStudent,
   isStudentModalOpen,
   studentForm,
@@ -48,7 +50,12 @@ function DashboardPage({
             <h2>Student List</h2>
             <span>Search students, add a record, or open a student modal.</span>
           </div>
-          <button type="button" className="primary-btn" onClick={onAddStudent}>
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={onAddStudent}
+            disabled={studentSubmitLoading || Boolean(deletingStudentId)}
+          >
             Add Student
           </button>
         </div>
@@ -77,14 +84,15 @@ function DashboardPage({
             <tbody>
               {filteredStudents.map((student) => (
                 <tr key={student._id}>
-                  <td>{student.fullName}</td>
-                  <td>{student.email}</td>
-                  <td>{student.courseName}</td>
-                  <td>{student.batchTiming}</td>
-                  <td className="actions">
+                  <td data-label="Full Name">{student.fullName}</td>
+                  <td data-label="Email">{student.email}</td>
+                  <td data-label="Course">{student.courseName}</td>
+                  <td data-label="Batch Timing">{student.batchTiming}</td>
+                  <td className="actions" data-label="Actions">
                     <button
                       type="button"
                       className="ghost-btn compact-btn"
+                      disabled={studentSubmitLoading || Boolean(deletingStudentId)}
                       onClick={() => onOpenStudent(student)}
                     >
                       Edit
@@ -92,9 +100,17 @@ function DashboardPage({
                     <button
                       type="button"
                       className="danger-btn compact-btn"
+                      disabled={studentSubmitLoading || deletingStudentId === student._id}
                       onClick={() => onStudentDelete(student._id)}
                     >
-                      Delete
+                      {deletingStudentId === student._id ? (
+                        <>
+                          <span className="spinner tiny" aria-hidden="true" />
+                          Deleting...
+                        </>
+                      ) : (
+                        "Delete"
+                      )}
                     </button>
                   </td>
                 </tr>
@@ -118,6 +134,8 @@ function DashboardPage({
         onClose={onCloseStudentModal}
         onSubmit={onStudentSubmit}
         onDelete={onStudentDelete}
+        studentSubmitLoading={studentSubmitLoading}
+        deletingStudentId={deletingStudentId}
       />
     </>
   );
