@@ -299,11 +299,13 @@ td span {
 .form-grid input,
 .form-grid select {
   width: 100%;
+  min-height: 48px;
   padding: 13px 14px;
   border: 1px solid var(--border);
   border-radius: 14px;
   background: #f9fefd;
   color: var(--text-main);
+  line-height: 1.2;
 }
 
 .field-group {
@@ -313,21 +315,30 @@ td span {
   min-width: 0;
 }
 
-.field-label {
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
 .input-error {
   border-color: #ef4444 !important;
   background: #fff5f5 !important;
 }
 
 .date-input {
-  min-height: 48px;
   appearance: none;
   -webkit-appearance: none;
+  text-align: left;
+}
+
+.form-grid select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 42px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--primary-dark) 50%),
+    linear-gradient(135deg, var(--primary-dark) 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) calc(50% - 2px),
+    calc(100% - 14px) calc(50% - 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
 }
 
 .date-input::-webkit-date-and-time-value {
@@ -735,10 +746,6 @@ td span {
 
   .field-group {
     width: 100%;
-  }
-
-  .field-label {
-    margin-bottom: 2px;
   }
 
   .date-input {

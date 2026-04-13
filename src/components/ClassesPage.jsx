@@ -23,22 +23,26 @@ function ClassesPage({
           onChange={(event) => setClassForm({ ...classForm, topic: event.target.value })}
           required
         />
-        <div className="field-group">
-          <label className="field-label" htmlFor="class-date">
-            Class Date
-          </label>
-          <input
-            id="class-date"
-            className="date-input"
-            type="date"
-            value={classForm.classDate}
-            disabled={classSubmitLoading}
-            onChange={(event) =>
-              setClassForm({ ...classForm, classDate: event.target.value })
+        <input
+          id="class-date"
+          className="date-input"
+          type={classForm.classDate ? "date" : "text"}
+          placeholder="Class Date"
+          value={classForm.classDate}
+          disabled={classSubmitLoading}
+          onFocus={(event) => {
+            event.target.type = "date";
+          }}
+          onBlur={(event) => {
+            if (!event.target.value) {
+              event.target.type = "text";
             }
-            required
-          />
-        </div>
+          }}
+          onChange={(event) =>
+            setClassForm({ ...classForm, classDate: event.target.value })
+          }
+          required
+        />
         <input
           placeholder="Batch Name"
           value={classForm.batchName}
