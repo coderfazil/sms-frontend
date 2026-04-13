@@ -39,15 +39,22 @@ function FeesPage({
           onChange={(event) => setFeeForm({ ...feeForm, feeAmount: event.target.value })}
           required
         />
-        <input
-          type="date"
-          value={feeForm.paymentDate}
-          disabled={feeSubmitLoading}
-          onChange={(event) =>
-            setFeeForm({ ...feeForm, paymentDate: event.target.value })
-          }
-          required
-        />
+        <div className="field-group">
+          <label className="field-label" htmlFor="payment-date">
+            Payment Date
+          </label>
+          <input
+            id="payment-date"
+            className="date-input"
+            type="date"
+            value={feeForm.paymentDate}
+            disabled={feeSubmitLoading}
+            onChange={(event) =>
+              setFeeForm({ ...feeForm, paymentDate: event.target.value })
+            }
+            required
+          />
+        </div>
         <select
           value={feeForm.paymentStatus}
           disabled={feeSubmitLoading}

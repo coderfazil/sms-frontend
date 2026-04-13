@@ -310,11 +310,32 @@ td span {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+}
+
+.field-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--primary-dark);
 }
 
 .input-error {
   border-color: #ef4444 !important;
   background: #fff5f5 !important;
+}
+
+.date-input {
+  min-height: 48px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.date-input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
 }
 
 .field-error,
@@ -710,6 +731,19 @@ td span {
 
   .modal-card {
     padding: 20px;
+  }
+
+  .field-group {
+    width: 100%;
+  }
+
+  .field-label {
+    margin-bottom: 2px;
+  }
+
+  .date-input {
+    width: 100%;
+    text-align: left;
   }
 }
 
