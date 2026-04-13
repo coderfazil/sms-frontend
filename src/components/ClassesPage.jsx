@@ -24,15 +24,21 @@ function ClassesPage({
           required
         />
         <div className="field-group">
-          <label className="field-label" htmlFor="class-date">
-            Class Date
-          </label>
           <input
             id="class-date"
             className="date-input"
-            type="date"
+            type={classForm.classDate ? "date" : "text"}
+            placeholder="Class Date"
             value={classForm.classDate}
             disabled={classSubmitLoading}
+            onFocus={(event) => {
+              event.target.type = "date";
+            }}
+            onBlur={(event) => {
+              if (!event.target.value) {
+                event.target.type = "text";
+              }
+            }}
             onChange={(event) =>
               setClassForm({ ...classForm, classDate: event.target.value })
             }

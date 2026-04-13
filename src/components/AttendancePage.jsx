@@ -48,15 +48,21 @@ function AttendancePage({
           ))}
         </select>
         <div className="field-group">
-          <label className="field-label" htmlFor="attendance-date">
-            Attendance Date
-          </label>
           <input
             id="attendance-date"
             className="date-input"
-            type="date"
+            type={attendanceForm.attendanceDate ? "date" : "text"}
+            placeholder="Attendance Date"
             value={attendanceForm.attendanceDate}
             disabled={attendanceSubmitLoading}
+            onFocus={(event) => {
+              event.target.type = "date";
+            }}
+            onBlur={(event) => {
+              if (!event.target.value) {
+                event.target.type = "text";
+              }
+            }}
             onChange={(event) =>
               setAttendanceForm({
                 ...attendanceForm,
