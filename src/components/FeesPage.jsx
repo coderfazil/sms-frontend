@@ -40,21 +40,15 @@ function FeesPage({
           required
         />
         <div className="field-group">
+          <label className="field-label" htmlFor="payment-date">
+            Payment Date
+          </label>
           <input
             id="payment-date"
             className="date-input"
-            type={feeForm.paymentDate ? "date" : "text"}
-            placeholder="Payment Date"
+            type="date"
             value={feeForm.paymentDate}
             disabled={feeSubmitLoading}
-            onFocus={(event) => {
-              event.target.type = "date";
-            }}
-            onBlur={(event) => {
-              if (!event.target.value) {
-                event.target.type = "text";
-              }
-            }}
             onChange={(event) =>
               setFeeForm({ ...feeForm, paymentDate: event.target.value })
             }

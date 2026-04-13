@@ -313,6 +313,12 @@ td span {
   min-width: 0;
 }
 
+.field-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
 .input-error {
   border-color: #ef4444 !important;
   background: #fff5f5 !important;
@@ -322,7 +328,6 @@ td span {
   min-height: 48px;
   appearance: none;
   -webkit-appearance: none;
-  text-align: left;
 }
 
 .date-input::-webkit-date-and-time-value {
@@ -730,6 +735,10 @@ td span {
 
   .field-group {
     width: 100%;
+  }
+
+  .field-label {
+    margin-bottom: 2px;
   }
 
   .date-input {
