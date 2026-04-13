@@ -5,7 +5,34 @@ import AttendancePage from "./components/AttendancePage";
 import ClassesPage from "./components/ClassesPage";
 import FeesPage from "./components/FeesPage";
 
-const API_BASE_URL = "https://sms-backend-xuio.onrender.com";
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL || "https://sms-backend-xuio.onrender.com"
+).replace(/\/$/, "");
+
+const getApiUrl = (path) => `${API_BASE_URL}/api${path}`;
+
+const getErrorMessage = async (response, fallbackMessage) => {
+  try {
+    const data = await response.json();
+    return data.message || fallbackMessage;
+  } catch {
+    return fallbackMessage;
+  }
+};
+
+const requestJson = async (path, options = {}) => {
+  const response = await fetch(getApiUrl(path), options);
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response, "Request failed."));
+  }
+
+  if (response.status === 204) {
+    return null;
+  }
+
+  return response.json();
+};
 
 const emptyStudentForm = {
   fullName: "",
@@ -61,18 +88,11 @@ function App() {
       setLoading(true);
       setError("");
 
-      const [studentsRes, attendanceRes, classesRes, feesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/students`),
-        fetch(`${API_BASE_URL}/api/attendance`),
-        fetch(`${API_BASE_URL}/api/classes`),
-        fetch(`${API_BASE_URL}/api/fees`)
-      ]);
-
       const [studentsData, attendanceData, classesData, feesData] = await Promise.all([
-        studentsRes.json(),
-        attendanceRes.json(),
-        classesRes.json(),
-        feesRes.json()
+        requestJson("/students"),
+        requestJson("/attendance"),
+        requestJson("/classes"),
+        requestJson("/fees")
       ]);
 
       setStudents(studentsData);
@@ -80,7 +100,7 @@ function App() {
       setClassEntries(classesData);
       setFeePayments(feesData);
     } catch (fetchError) {
-      setError("Unable to connect to the server. Start backend and MongoDB first.");
+      setError(fetchError.message || "Unable to connect to the server.");
     } finally {
       setLoading(false);
     }
@@ -154,39 +174,40 @@ function App() {
       return;
     }
 
-    const endpoint = selectedStudent
-      ? `${API_BASE_URL}/students/${selectedStudent._id}`
-      : `${API_BASE_URL}/students`;
+    try {
+      await requestJson(
+        selectedStudent ? `/students/${selectedStudent._id}` : "/students",
+        {
+          method: selectedStudent ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(studentForm)
+        }
+      );
 
-    const method = selectedStudent ? "PUT" : "POST";
-
-    const response = await fetch(endpoint, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(studentForm)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setStudentFormErrorMessage(data.message || "Unable to save student details.");
+      closeStudentModal();
+      await loadDashboardData();
+    } catch (submitError) {
+      setStudentFormErrorMessage(
+        submitError.message || "Unable to save student details."
+      );
       return;
     }
-
-    closeStudentModal();
-    await loadDashboardData();
   };
 
   const handleStudentDelete = async (studentId) => {
-    await fetch(`${API_BASE_URL}/students/${studentId}`, {
-      method: "DELETE"
-    });
+    try {
+      await requestJson(`/students/${studentId}`, {
+        method: "DELETE"
+      });
 
-    if (selectedStudent?._id === studentId) {
-      closeStudentModal();
+      if (selectedStudent?._id === studentId) {
+        closeStudentModal();
+      }
+
+      await loadDashboardData();
+    } catch (deleteError) {
+      setError(deleteError.message || "Unable to delete student.");
     }
-
-    await loadDashboardData();
   };
 
   const handleAttendanceSubmit = async (event) => {
@@ -194,50 +215,56 @@ function App() {
 
     setAttendanceError("");
 
-    const response = await fetch(`${API_BASE_URL}/attendance`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(attendanceForm)
-    });
+    try {
+      await requestJson("/attendance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(attendanceForm)
+      });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      setAttendanceError(data.message || "Unable to save attendance.");
+      setAttendanceForm(emptyAttendanceForm);
+      await loadDashboardData();
+    } catch (submitError) {
+      setAttendanceError(submitError.message || "Unable to save attendance.");
       return;
     }
-
-    setAttendanceForm(emptyAttendanceForm);
-    await loadDashboardData();
   };
 
   const handleClassSubmit = async (event) => {
     event.preventDefault();
 
-    await fetch(`${API_BASE_URL}/classes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(classForm)
-    });
+    try {
+      await requestJson("/classes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(classForm)
+      });
 
-    setClassForm(emptyClassForm);
-    await loadDashboardData();
+      setClassForm(emptyClassForm);
+      await loadDashboardData();
+    } catch (submitError) {
+      setError(submitError.message || "Unable to save class entry.");
+    }
   };
 
   const handleFeeSubmit = async (event) => {
     event.preventDefault();
 
-    await fetch(`${API_BASE_URL}/fees`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...feeForm,
-        feeAmount: Number(feeForm.feeAmount)
-      })
-    });
+    try {
+      await requestJson("/fees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...feeForm,
+          feeAmount: Number(feeForm.feeAmount)
+        })
+      });
 
-    setFeeForm(emptyFeeForm);
-    await loadDashboardData();
+      setFeeForm(emptyFeeForm);
+      await loadDashboardData();
+    } catch (submitError) {
+      setError(submitError.message || "Unable to save fee payment.");
+    }
   };
   const summary = {
     totalStudents: students.length,
