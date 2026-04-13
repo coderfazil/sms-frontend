@@ -62,10 +62,10 @@ function App() {
       setError("");
 
       const [studentsRes, attendanceRes, classesRes, feesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/students`),
-        fetch(`${API_BASE_URL}/attendance`),
-        fetch(`${API_BASE_URL}/classes`),
-        fetch(`${API_BASE_URL}/fees`)
+        fetch(`${API_BASE_URL}/api/students`),
+        fetch(`${API_BASE_URL}/api/attendance`),
+        fetch(`${API_BASE_URL}/api/classes`),
+        fetch(`${API_BASE_URL}/api/fees`)
       ]);
 
       const [studentsData, attendanceData, classesData, feesData] = await Promise.all([
