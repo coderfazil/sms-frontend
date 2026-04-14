@@ -162,7 +162,7 @@ function App() {
     const errors = {};
     const namePattern = /^[A-Za-z ]{3,}$/;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phonePattern = /^[6-9]\d{9}$/;
+    const phonePattern = /^\d{10}$/;
 
     if (!namePattern.test(studentForm.fullName.trim())) {
       errors.fullName = "Enter a valid name with at least 3 letters.";
@@ -173,7 +173,7 @@ function App() {
     }
 
     if (!phonePattern.test(studentForm.contactNumber.trim())) {
-      errors.contactNumber = "Enter a valid 10-digit mobile number.";
+      errors.contactNumber = "Enter a valid 10-digit number.";
     }
 
     if (studentForm.courseName.trim().length < 2) {
